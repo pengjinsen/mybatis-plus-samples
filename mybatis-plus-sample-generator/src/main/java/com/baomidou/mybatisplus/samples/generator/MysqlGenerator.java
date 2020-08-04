@@ -1,8 +1,6 @@
 package com.baomidou.mybatisplus.samples.generator;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
@@ -23,7 +21,7 @@ import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
  * <p>
  * mysql 代码生成器演示例子
  * </p>
- *
+ * @link https://mybatis.plus/guide/generator.html
  * @author jobob
  * @since 2018-09-12
  */
@@ -59,17 +57,17 @@ public class MysqlGenerator {
         GlobalConfig gc = new GlobalConfig();
         String projectPath = System.getProperty("user.dir");
         gc.setOutputDir(projectPath + "/mybatis-plus-sample-generator/src/main/java");
-        gc.setAuthor("jobob");
+        gc.setAuthor("Jay Mitter");
         gc.setOpen(false);
         mpg.setGlobalConfig(gc);
 
         // 数据源配置
         DataSourceConfig dsc = new DataSourceConfig();
-        dsc.setUrl("jdbc:mysql://localhost:3306/ant?useUnicode=true&serverTimezone=GMT&useSSL=false&characterEncoding=utf8");
+        dsc.setUrl("jdbc:mysql://localhost:3306/book_admin?useUnicode=true&serverTimezone=GMT&useSSL=false&characterEncoding=utf8");
         // dsc.setSchemaName("public");
         dsc.setDriverName("com.mysql.jdbc.Driver");
         dsc.setUsername("root");
-        dsc.setPassword("1q2w3e4r");
+        dsc.setPassword("root");
         mpg.setDataSource(dsc);
 
         // 包配置
@@ -78,11 +76,21 @@ public class MysqlGenerator {
         pc.setParent("com.baomidou.mybatisplus.samples.generator");
         mpg.setPackageInfo(pc);
 
+        /*// 指定自定义模板路径, 位置：/resources/templates/entity2.java.ftl(或者是.vm)
+        // 注意不要带上.ftl(或者是.vm), 会根据使用的模板引擎自动识别
+        TemplateConfig templateConfig = new TemplateConfig().setEntity("templates/entity2.java");
+        // 配置自定义模板
+        mpg.setTemplate(templateConfig);*/
+
         // 自定义配置
         InjectionConfig cfg = new InjectionConfig() {
+            //自定义属性注入:abc
+            //在.ftl(或者是.vm)模板中，通过${cfg.abc}获取属性
             @Override
             public void initMap() {
-                // to do nothing
+                /*Map<String, Object> map = new HashMap<>();
+                map.put("abc", this.getConfig().getGlobalConfig().getAuthor() + "-mp");
+                this.setMap(map);*/
             }
         };
         List<FileOutConfig> focList = new ArrayList<>();
@@ -102,10 +110,13 @@ public class MysqlGenerator {
         StrategyConfig strategy = new StrategyConfig();
         strategy.setNaming(NamingStrategy.underline_to_camel);
         strategy.setColumnNaming(NamingStrategy.underline_to_camel);
-        strategy.setSuperEntityClass("com.baomidou.mybatisplus.samples.generator.common.BaseEntity");
+        // 你自己的父类实体,没有就不用设置!
+        // strategy.setSuperEntityClass("com.baomidou.mybatisplus.samples.generator.common.BaseEntity");
         strategy.setEntityLombokModel(true);
-        strategy.setSuperControllerClass("com.baomidou.mybatisplus.samples.generator.common.BaseController");
-        strategy.setInclude(scanner("表名"));
+        // 你自己的父类控制器,没有就不用设置!
+        // strategy.setSuperControllerClass("com.baomidou.mybatisplus.samples.generator.common.BaseController");
+        // 表名，多个英文逗号分割
+        strategy.setInclude(scanner("表名（多个表明用英文逗号分隔）").split(","));
         strategy.setSuperEntityColumns("id");
         strategy.setControllerMappingHyphenStyle(true);
         strategy.setTablePrefix(pc.getModuleName() + "_");

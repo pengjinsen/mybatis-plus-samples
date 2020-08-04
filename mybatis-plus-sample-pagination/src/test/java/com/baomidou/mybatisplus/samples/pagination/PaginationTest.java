@@ -83,6 +83,7 @@ public class PaginationTest {
     @Test
     public void tests2() {
         /* 下面的 left join 不会对 count 进行优化,因为 where 条件里有 join 的表的条件 */
+        // SELECT COUNT(1) FROM user u LEFT JOIN children c ON c.user_id = u.id WHERE u.age = 18 AND c.name = 'Jack'
         MyPage<UserChildren> myPage = new MyPage<>(1, 5);
         myPage.setSelectInt(18).setSelectStr("Jack");
         MyPage<UserChildren> userChildrenMyPage = mapper.userChildrenPage(myPage);
@@ -91,6 +92,7 @@ public class PaginationTest {
 
         /* 下面的 left join 会对 count 进行优化,因为 where 条件里没有 join 的表的条件 */
         myPage = new MyPage<UserChildren>(1, 5).setSelectInt(18);
+        // SELECT COUNT(1) FROM user u WHERE u.age = 18
         userChildrenMyPage = mapper.userChildrenPage(myPage);
         records = userChildrenMyPage.getRecords();
         records.forEach(System.out::println);
@@ -106,7 +108,7 @@ public class PaginationTest {
     @Test
     public void testMyPageMap() {
         MyPage<User> myPage = new MyPage<User>(1, 5).setSelectInt(20).setSelectStr("Jack");
-        mapper.mySelectPageMap(myPage, Maps.newHashMap("name", "%a"));
+        MyPage<User> userMyPage = mapper.mySelectPageMap(myPage, Maps.newHashMap("name", "%a"));
         myPage.getRecords().forEach(System.out::println);
     }
 

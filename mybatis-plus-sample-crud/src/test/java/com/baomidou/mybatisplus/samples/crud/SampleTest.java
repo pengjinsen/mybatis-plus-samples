@@ -17,6 +17,7 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -141,6 +142,14 @@ public class SampleTest {
     @Test
     public void selectMaps() {
         List<Map<String, Object>> mapList = mapper.selectMaps(Wrappers.<User>query().orderByAsc("age"));
+        // 一个map对应印个对象，map的key就是字段名，对应的value就是字段值
+        for (Map<String, Object> map : mapList) {
+            Set<Map.Entry<String, Object>> entries = map.entrySet();
+            for (Map.Entry<String, Object> entry : entries) {
+                String key = entry.getKey();
+                System.out.println(key);
+            }
+        }
         assertThat(mapList).isNotEmpty();
         assertThat(mapList.get(0)).isNotEmpty();
         System.out.println(mapList.get(0));
